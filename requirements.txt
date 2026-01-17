@@ -2,7 +2,6 @@ djangorestframework-simplejwt==5.3.0
 django-cors-headers==4.3.0
 psycopg2-binary==2.9.9
 python-decouple==3.8
-Pillow==10.1.0
 django-filter==23.3
 drf-spectacular==0.26.5
 celery==5.3.4
@@ -34,7 +33,6 @@ psycopg2-binary==2.9.9
 python-decouple==3.8
 
 # Image processing (xato beradigan Pillow versiyasi pre-built wheel)
-Pillow==10.0.0
 
 # Celery + Redis (agar ishlatilsa)
 celery==5.3.1
