@@ -1,41 +1,51 @@
+# Python cache va kompilyatsiya fayllari
 __pycache__/
 *.py[cod]
 *$py.class
 
-
+# Virtual environment
 .venv/
 venv/
 env/
 ENV/
 
+# Environment fayllari
 .env
+.env.*
+
+# Django fayllar
 db.sqlite3
 media/
 staticfiles/
 *.log
-.vscode/
-.idea/
-
-
 */migrations/__pycache__/
 
-.env.*
-
+# IDE va editor fayllari
+.vscode/
+.idea/
 *.swp
 *.swo
 
+# Mac va Windows fayllari
 .DS_Store
 Thumbs.db
 desktop.ini
 
+# Test coverage
 .coverage
 htmlcov/
 .pytest_cache/
 
+# Node.js va build fayllari
 node_modules/
 dist/
 build/
 
-
+# Celery fayllari
 celerybeat-schedule
 celerybeat.pid
+celerybeat-schedule-shm
+celerybeat-schedule-wal
+
+# Maxsus push qilinmasligi kerak bo'lgan fayl
+main.py
