@@ -1,51 +1,22 @@
+# Django va DRF
+Django==4.2.27
+djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.0
+
+# CORS va filtrlar
 django-cors-headers==4.3.0
+django-filter==23.3
+
+# API dokumentatsiya
+drf-spectacular==0.26.5
+
+# Database
 psycopg2-binary==2.9.9
 python-decouple==3.8
-django-filter==23.3
-drf-spectacular==0.26.5
-celery==5.3.4
-redis==5.0.1
-djangorestframework==3.15.0
 
-
-
+# Asosiy kutubxona
 Pillow==10.0.0
 
-# DRF
-djangorestframework==3.14.0
-
-# JWT auth
-djangorestframework-simplejwt==5.3.0
-
-# CORS headers
-django-cors-headers==4.3.0
-
-# PostgreSQL adapter
-psycopg2-binary==2.9.9
-
-# Environment variables
-python-decouple==3.8
-
-# Image processing (xato beradigan Pillow versiyasi pre-built wheel)
-
-# Celery + Redis (agar ishlatilsa)
-celery==5.3.1
-redis==5.2.0
-
-# Gunicorn server
-gunicorn==22.3.1
-
-# Static fayllar
-whitenoise==6.5.0
-
-# DRF filtering
-django-filter==23.2
-Django==4.2.7
-
-# Timezone utils
-pytz==2023.3.post1
-
-# Requests
-requests==2.32.0
-
+# Celery va Redis
+celery==5.3.4
+redis==5.0.1
