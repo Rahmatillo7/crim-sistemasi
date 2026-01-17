@@ -1,16 +1,16 @@
 from celery import shared_task
 from django.utils import timezone
 from datetime import timedelta
-from notification.models import Notification, SMSNotification
+from notification.models import Notification, SMSNotification, EmailNotification
 from akademk.models import Group, Enrollment, Student, Schedule
 from ishtirok.models import Homework, HomeworkSubmission, Attendance
 from yadro.models import Center
-from moliya.models import Payment
+from moliya.models import Payment, Debt
 
 
+# ----------------- Class reminder -----------------
 @shared_task
 def send_class_reminder(group_id, hours_before=2):
-    """Dars boshlanishidan oldin eslatma yuborish"""
     try:
         group = Group.objects.get(id=group_id)
     except Group.DoesNotExist:
@@ -26,6 +26,7 @@ def send_class_reminder(group_id, hours_before=2):
     enrollments = Enrollment.objects.filter(group=group, status="active")
     for enrollment in enrollments:
         for schedule in schedules:
+            # Notification
             Notification.objects.create(
                 user=enrollment.student.user,
                 title="Dars eslatmasi",
@@ -33,18 +34,20 @@ def send_class_reminder(group_id, hours_before=2):
                 type="info",
                 link=f"/groups/{group.id}",
             )
+            # SMS
             if enrollment.student.user.phone:
                 SMSNotification.objects.create(
                     phone=enrollment.student.user.phone,
                     message=f"Eslatma: {hours_before} soatdan keyin {group.name} darsi. Vaqt: {schedule.start_time.strftime('%H:%M')}",
+                    status="pending",
                 )
 
     return f"Reminders sent to {enrollments.count()} students"
 
 
+# ----------------- Homework reminder -----------------
 @shared_task
 def send_homework_deadline_reminder(homework_id):
-    """Vazifa muddati tugashidan oldin eslatma"""
     try:
         homework = Homework.objects.get(id=homework_id)
     except Homework.DoesNotExist:
@@ -69,14 +72,15 @@ def send_homework_deadline_reminder(homework_id):
             SMSNotification.objects.create(
                 phone=enrollment.student.user.phone,
                 message=f"Vazifa '{homework.title}' muddati {homework.due_date.strftime('%d.%m.%Y')} tugaydi. Topshirishni unutmang!",
+                status="pending",
             )
 
     return f"Reminders sent to {not_submitted.count()} students"
 
 
+# ----------------- Low attendance -----------------
 @shared_task
 def check_low_attendance():
-    """Past davomat ko'rsatkichlari uchun ogohlantirish"""
     thirty_days_ago = timezone.now() - timedelta(days=30)
     enrollments = Enrollment.objects.filter(status="active")
 
@@ -89,10 +93,8 @@ def check_low_attendance():
         total_classes = attendances.count()
         if total_classes == 0:
             continue
-
         attended = attendances.filter(status="present").count()
         attendance_rate = (attended / total_classes) * 100
-
         if attendance_rate < 70:
             Notification.objects.create(
                 user=enrollment.student.user,
@@ -105,14 +107,14 @@ def check_low_attendance():
                 SMSNotification.objects.create(
                     phone=enrollment.student.parent_phone,
                     message=f"DIQQAT! {enrollment.student.user.name}ning {enrollment.group.name} guruhida davomat {attendance_rate:.1f}% ga tushdi.",
+                    status="pending",
                 )
-
     return "Low attendance check completed"
 
 
+# ----------------- Monthly report -----------------
 @shared_task
 def generate_monthly_report(center_id):
-    """Oylik hisobot yaratish"""
     try:
         center = Center.objects.get(id=center_id)
     except Center.DoesNotExist:
@@ -128,14 +130,6 @@ def generate_monthly_report(center_id):
     )
     total_revenue = sum(p.amount for p in monthly_payments)
 
-    report_data = {
-        "center": center.name,
-        "month": today.strftime("%B %Y"),
-        "total_students": total_students,
-        "total_revenue": float(total_revenue),
-        "total_payments": monthly_payments.count(),
-    }
-
     directors = center.users.filter(role="director")
     for director in directors:
         Notification.objects.create(
@@ -145,5 +139,4 @@ def generate_monthly_report(center_id):
             type="success",
             link="/reports",
         )
-
     return f"Report generated for {center.name}"

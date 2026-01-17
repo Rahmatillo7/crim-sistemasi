@@ -186,7 +186,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CELERY_BROKER_URL = "redis://localhost:6379/0"  # Redis
 # Yoki RabbitMQ: 'amqp://guest:guest@localhost:5672//'
 
-CELERY_RESULT_BACKEND = "django-db"  # Natijalarni DB'da saqlash
+CELERY_RESULT_BACKEND = "django-db"
 CELERY_CACHE_BACKEND = "default"
 
 CELERY_ACCEPT_CONTENT = ["json"]
@@ -201,3 +201,14 @@ SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
+
+
+DEFAULT_FROM_EMAIL = "mohi@gmail.com"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "mohi@gmail.com"
+EMAIL_HOST_PASSWORD = "zxcvbnm123*"
+# settings.py
+# settings.py
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
